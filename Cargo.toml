@@ -1,6 +1,7 @@
 [package]
 name = "local-jcs-store"
 edition = "2021"
+resolver = "2"
 keywords = ["json","JCS"]
 categories = [
     "data-structures",
@@ -8,7 +9,7 @@ categories = [
     "encoding",
     "filesystem"
 ]
-version="0.0.1"
+version="0.0.2"
 publish=["crates-io"]
 description="Store a directory of JSON objects, indexed by a cannonical hash"
 license = "MIT"

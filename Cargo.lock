@@ -152,7 +152,7 @@ checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
 
 [[package]]
 name = "local-jcs-store"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "color-eyre",
  "eyre",

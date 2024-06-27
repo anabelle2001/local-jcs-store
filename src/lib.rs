@@ -4,7 +4,6 @@ use serde_jcs::to_vec as to_jcs;
 use serde_json::Value;
 use std::path::PathBuf;
 use tokio::{fs, io::AsyncWriteExt};
-
 /// Computes the SHA-256 hash of the input, and encodes the result in Base64.
 /// '/' characters are replaced by '+'.
 ///
@@ -37,7 +36,10 @@ pub fn b64sha256(bytes: &[u8]) -> String {
 ///
 /// let tmp_dir = std::env::temp_dir();
 /// let mut my_db = Database::open(tmp_dir).unwrap();
-/// let item = my_db.put_obj(&json! ({"Hello":"World!"}) ).await.unwrap();
+/// let item = my_db
+///     .put_obj(&json!( {"Hello":"World!"} ))
+///     .await
+///     .unwrap();
 /// # }
 /// ```
 
@@ -45,6 +47,32 @@ pub struct Database {
     path: PathBuf,
 }
 
+pub trait PutInDB {
+    async fn put_in_db(
+        &self,
+        db: &mut Database,
+    ) -> Result<String>;
+}
+
+impl PutInDB for Value {
+    async fn put_in_db(
+        &self,
+        db: &mut Database,
+    ) -> Result<String> {
+        mk_item(&self)?.put_in_db(db).await
+    }
+}
+impl PutInDB for Item {
+    async fn put_in_db(
+        &self,
+        db: &mut Database,
+    ) -> Result<String> {
+        match db.put_item(self).await {
+            Err(x) => Err(x),
+            Ok(_) => Ok(self.hash_b64.clone()),
+        }
+    }
+}
 /// A JSON object and its hash.
 ///
 /// # Properties
@@ -55,6 +83,7 @@ pub struct Database {
 ///
 /// [rfc8785]: https://tools.ietf.org/html/rfc8785
 
+#[derive(Clone)]
 pub struct Item {
     pub hash_b64: String,
     pub json_utf8: String,
@@ -138,6 +167,10 @@ impl Database {
 
         let item = self.get_item(hash_b64).await?;
         Ok(Value::from_str(&item.json_utf8)?)
+    }
+
+    pub fn get_path(&self) -> &PathBuf {
+        &self.path
     }
 }
 
