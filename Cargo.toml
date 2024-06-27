@@ -1,6 +1,19 @@
 [package]
 name = "local-jcs-store"
 edition = "2021"
+keywords = ["json","JCS"]
+categories = [
+    "data-structures",
+    "database-implementations",
+    "encoding",
+    "filesystem"
+]
+version="0.0.1"
+publish=["crates-io"]
+description="Store a directory of JSON objects, indexed by a cannonical hash"
+license = "MIT"
+repository = "https://github.com/anabelle2001/local-jcs-store"
+
 
 [lib]
 
